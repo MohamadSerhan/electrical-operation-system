@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run EOEMS PowerTransformers SCADA UI",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"-c",
+				"Release"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

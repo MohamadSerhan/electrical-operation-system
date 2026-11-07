@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "currentReleasedVersion": "6",
+  "nextCandidateVersion": "6.1",
+  "previousReleasedVersion": "5.1",
+  "buildIdentifier": "V6-Phase1-20261022",
+  "releaseTimestampUtc": "2026-10-22T19:34:20Z",
+  "sourceCommitOrHash": "sha256:3ED205B6722D33A9E46D527A5C1FA8FAAC29D05CB3F6C18D03E2FA9F2C7FEB3E",
+  "sourceHashAlgorithm": "SHA-256 over sorted relative-path and per-file-hash lines; excludes generated bin/obj/publish outputs",
+  "buildStatus": "passed; Release build; 0 warnings; 0 errors",
+  "testStatus": "passed; 180 smoke assertions on the V6 Phase 1 source before master version-display changes",
+  "releaseApprovalStatus": "validated package; not production commissioning or deployment approval",
+  "releaseZipLocation": "C:\\Users\\M.Serhan\\.copilot\\session-state\\bc038360-11e6-4f01-84cc-cf75802b39fe\\files\\Power-online-archive-audit\\EOEMS_PowerTransformersSCADA_V5.1_Portable-Windows-x64_2026-10-22\\win-x64\\EOEMS_PowerTransformersSCADA_V6_Phase1_win-x64.zip",
+  "packageSha256": "008758240DB4BA81CC370D1A5A1F122546FFE19F2C7692E3688B29E03B52188F",
+  "reservedCandidates": [],
+  "candidateHistory": [],
+  "latestBuildStatus": "passed; Release build; 0 warnings; 0 errors",
+  "latestTestStatus": "passed; 182 smoke assertions",
+  "lastBuildIdentifier": "V6.0-Master-20261022",
+  "lastSourceHash": "sha256:496AD76A99E387C50D09C7EE35447FD10DEE9A4758EECC9AF3E1908EF854A1F3"
+}

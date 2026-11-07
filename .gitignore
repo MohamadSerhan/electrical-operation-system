@@ -1,0 +1,24 @@
+# Build output (always rebuildable from source)
+**/bin/
+**/obj/
+**/.vs/
+*.user
+*.suo
+
+# Deployed/runtime instance: databases, logs, secrets, generated license files.
+# This is NOT source code and must never be committed.
+/App/
+
+# Standalone vendor tool: NEVER commit. Its source embeds the RSA PRIVATE signing
+# key. If this ever reaches a public or compromised account, every license this
+# software has issued becomes forgeable. Keep it local-only / offline-backed.
+/Keygen/
+/Source/Tools/Keygen/
+
+# Local file backups made during development sessions.
+/Backups/
+
+# Misc local artifacts
+*.log
+*.bak
+page-timing.log

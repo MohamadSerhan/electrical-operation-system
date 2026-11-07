@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Shared by the main app (verification only) and the separate Keygen tool (signing).
+       This project never contains the private signing key, so building or decompiling the
+       shipped app cannot reveal it. -->
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>EOEMS.Licensing</RootNamespace>
+    <AssemblyTitle>EOEMS Licensing Core</AssemblyTitle>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>run</AssemblyName>
+    <AssemblyTitle>Electrical Operation Center</AssemblyTitle>
+    <Product>Electrical Operation Center</Product>
+    <Company>EOEMS</Company>
+    <ApplicationIcon>..\Assets\ElectricalOperationCenter.ico</ApplicationIcon>
+  </PropertyGroup>
+</Project>

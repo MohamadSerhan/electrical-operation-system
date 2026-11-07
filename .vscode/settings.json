@@ -1,0 +1,6 @@
+{
+    "opilot.experimental.nativeThinkingPart": true,
+    "opilot.experimental.webSearch": true,
+    "opilot.ignoreSslErrors": true,
+    "opilot.hideThinkingContent": true
+}
