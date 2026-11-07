@@ -6,6 +6,7 @@ Imports System.Linq
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports System.Windows.Forms
+Imports EOEMS.Licensing
 
 Friend NotInheritable Class PageHostPanel
     Inherits Panel
@@ -108,6 +109,7 @@ Public NotInheritable Class MainShellForm
     Private ReadOnly _pageCache As New Dictionary(Of String, Control)(StringComparer.Ordinal)
     Private _sidebar As Panel
     Private ReadOnly _plcPill As New StatusPill()
+    Private ReadOnly _trialPill As New Button()
     Private ReadOnly _footerStatus As New Label()
     Private ReadOnly _clockLabel As New Label()
     Private ReadOnly _activePageTitle As New Label()
@@ -174,6 +176,7 @@ Public NotInheritable Class MainShellForm
         AddHandler _accountingTimer.Tick, AddressOf OnAccountingTick
         _accountingTimer.Start()
         _clockLabel.Text = DateTime.Now.ToString("dd MMM yyyy  •  HH:mm:ss")
+        RefreshTrialBanner()
         ShowPage("Overview")
     End Sub
 
@@ -347,6 +350,18 @@ Public NotInheritable Class MainShellForm
         header.Controls.Add(_activePageTitle)
         header.Controls.Add(_plcPill)
 
+        _trialPill.FlatStyle = FlatStyle.Flat
+        _trialPill.Font = New Font("Segoe UI", 8.0F, FontStyle.Bold)
+        _trialPill.ForeColor = Color.White
+        _trialPill.BackColor = UiTheme.Amber
+        _trialPill.FlatAppearance.BorderSize = 0
+        _trialPill.Cursor = Cursors.Hand
+        _trialPill.AutoSize = False
+        _trialPill.Size = New Size(168, 26)
+        _trialPill.Visible = False
+        AddHandler _trialPill.Click, AddressOf OnTrialPillClicked
+        header.Controls.Add(_trialPill)
+
         Dim probe As New IconButton With {.Text = "Read PLC now", .Glyph = Icons.Refresh, .Size = New Size(138, 34)}
         probe.Enabled = Not _session.IsOfflinePreview
         AddHandler probe.Click, AddressOf OnProbeClicked
@@ -397,7 +412,12 @@ Public NotInheritable Class MainShellForm
                                           actionLeft = _clockLabel.Left
                                       End If
                                       _plcPill.Location = New Point(Math.Max(brand.Right + 20, actionLeft - _plcPill.Width - 12), 17)
-                                      _activePageTitle.Width = Math.Max(0, _plcPill.Left - _activePageTitle.Left - 16)
+                                      If _trialPill.Visible Then
+                                          _trialPill.Location = New Point(Math.Max(brand.Right + 20, _plcPill.Left - _trialPill.Width - 10), 19)
+                                          _activePageTitle.Width = Math.Max(0, _trialPill.Left - _activePageTitle.Left - 16)
+                                      Else
+                                          _activePageTitle.Width = Math.Max(0, _plcPill.Left - _activePageTitle.Left - 16)
+                                      End If
                                       _activePageTitle.Visible = w >= 1000 AndAlso _activePageTitle.Width >= 80
                                   End Sub
         Return header
@@ -687,16 +707,38 @@ Public NotInheritable Class MainShellForm
     ' License keys can expire while the app keeps running (trials, term licenses); re-check on a
     ' low frequency timer and close gracefully instead of letting a lapsed copy carry on silently.
     Private Sub OnLicenseRecheckTick(sender As Object, e As EventArgs)
-        Dim keyText = LicenseStore.LoadRawKey()
-        Dim status = If(String.IsNullOrEmpty(keyText),
-            New LicenseStatus With {.IsValid = False, .Reason = "No license is registered on this computer."},
-            LicenseStore.Evaluate(keyText))
+        Dim status = LicenseGate.EvaluateCurrent()
+        RefreshTrialBanner()
         If status.IsValid Then Return
         _licenseTimer.Stop()
         MessageBox.Show(Me, "This license is no longer valid: " & status.Reason & Environment.NewLine & Environment.NewLine &
                         "The application will now close. Register a valid license to continue.",
                         "License expired", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         Close()
+    End Sub
+
+    ' Shows (or hides) the amber trial pill in the header based on the gate's last evaluated
+    ' status, and lets the user open the (non-mandatory) registration screen early from it.
+    Private Sub RefreshTrialBanner()
+        Dim status = LicenseGate.CurrentStatus
+        Dim isActiveTrial = status IsNot Nothing AndAlso status.IsValid AndAlso
+            status.Payload IsNot Nothing AndAlso status.Payload.Plan = LicensePlan.Trial
+        If Not isActiveTrial Then
+            _trialPill.Visible = False
+            Return
+        End If
+        Dim days = If(status.DaysRemaining.HasValue, status.DaysRemaining.Value, 0)
+        _trialPill.Text = "TRIAL • " & days & If(days = 1, " DAY LEFT", " DAYS LEFT")
+        _trialPill.Visible = True
+        _trialPill.Location = New Point(Math.Max(20, _plcPill.Left - _trialPill.Width - 10), 19)
+        _activePageTitle.Width = Math.Max(0, _trialPill.Left - _activePageTitle.Left - 16)
+    End Sub
+
+    Private Sub OnTrialPillClicked(sender As Object, e As EventArgs)
+        Using form As New LicenseRegistrationForm(LicenseGate.CurrentStatus, isMandatory:=False)
+            form.ShowDialog(Me)
+        End Using
+        RefreshTrialBanner()
     End Sub
 
     Private Sub SetPageActive(view As Control, active As Boolean)
